@@ -1,0 +1,87 @@
+Tema: Procesare și analiză a semnalelor audio cu filtre Gabor
+Acest proiect reprezintă implementarea unei teme bazate pe procesarea și clasificarea semnalelor audio utilizând filtre Gabor și metode de învățare automată. Mai jos este prezentată structura codului și modul în care fiecare cerință a fost abordată și rezolvată.
+
+Cerințe și Implementare
+1. Implementare filtru Gabor [3 puncte]
+
+Cerință:
+
+Implementarea unei funcții pentru crearea unui filtru Gabor, incluzând variante modulate cu funcțiile sinusoidale cos(x) și sin(x).
+Ce am făcut:
+
+Am creat funcția gabor_filter(size, sigma, freq) care generează un filtru Gaussian modulându-l cu cos și sin:
+Gaussianul este calculat pe baza ecuației furnizate. Filtrele sunt generate prin înmulțirea Gaussianului cu funcțiile sinusoidale. Rezultatul este returnat sub formă de tuple (cos_h, sin_h).
+
+2. Creare set de filtre Gabor [1 punct]
+Cerință:
+
+Crearea unui set de filtre Gabor pe baza scalei Mel, cu parametri calculați pentru frecvențele centrale și deviațiile standard.
+Ce am făcut:
+
+Am implementat funcția create_gabor_filters(fs, num_filters=12, filter_size=1102):
+Am calculat segmentele pe scala Mel și le-am convertit în scala normală.
+Am determinat centrele frecvențelor  și lungimile
+Pe baza acestor parametri, am creat 12 filtre Gabor, fiecare cu dimensiunea 1102, utilizând funcția gabor_filter.
+
+3. Afișarea spectrului filtrelor [1 punct]
+Cerință:
+
+Calcularea spectrului filtrelor Gabor utilizând transformata Fourier discretă (FFT) și salvarea unui grafic cu rezultatul.
+Ce am făcut:
+
+Am creat funcția plot_spectrum(filters, fs, spectrum_file):
+Am utilizat scipy.fft.fft pentru a calcula spectrul fiecărui filtru Gabor (partea reală fiind pentru cos).
+Am selectat doar frecvențele pozitive și am generat graficul pentru magnitudinea FFT-ului fiecărui filtru.
+Graficul spectrului este salvat sub numele Mereu_Ioan_Flaviu_342C3_spectru_filtre.png.
+
+4.a Creare ferestre [2 puncte]
+Cerință:
+
+Generarea ferestrelor de dimensiune K (1102) din fiecare semnal audio. Ferestrele trebuie să fie decalate cu K eșantioane între ele.
+Ce am făcut:
+
+Am creat funcția create_windows(audio, filter_size):
+Am divizat fiecare semnal audio în ferestre consecutive de dimensiune K, cu decalaj K.
+Ferestrele sunt returnate sub forma unei liste.
+4.b Filtrare ferestre [2 puncte]
+Cerință:
+
+Aplicarea filtrelor Gabor pe ferestrele audio, utilizând un produs scalar între fiecare fereastră și filtrele transpus.
+Ce am făcut:
+
+Am implementat procesul de filtrare în funcția get_features(audio_train, fs):
+Am utilizat funcția create_windows pentru a crea ferestrele audio.
+Am aplicat simultan toate filtrele Gabor (cos și sin) pe fiecare fereastră printr-un produs matriceal.
+Am calculat media și deviația standard pentru ieșirile fiecărui filtru, obținând un vector de dimensiune 2M pentru fiecare fișier audio.
+Rezultatul final este o matrice de trăsături[D×2M], returnată ca feat_train.
+Clasificare și evaluare
+Cerință:
+
+Clasificarea semnalelor audio utilizând algoritmul KNN și evaluarea performanței pe seturile de antrenare și testare.
+Ce am făcut:
+
+În funcția main():
+Am folosit KNeighborsClassifier din sklearn pentru antrenarea unui clasificator KNN pe trăsăturile calculate.
+Am evaluat acuratețea pe seturile de antrenare și testare.
+Rezultatele sunt afișate pe consolă.
+Structura Fișierelor
+tema_schelet.py:
+
+Conține logica principală a proiectului, inclusiv apelurile funcțiilor definite pentru filtrare, creare ferestre și clasificare.
+Se ocupă de încărcarea datelor și implementarea fluxului general.
+get_features.py:
+
+Include implementările pentru:
+Crearea filtrelor Gabor (create_gabor_filters).
+Aplicarea FFT și afișarea spectrului (plot_spectrum).
+Filtrarea semnalelor audio și extragerea trăsăturilor (get_features).
+Divizarea semnalelor audio în ferestre (create_windows).
+Fișiere Salvate:
+
+Mereu_Ioan_Flaviu_342C3_gabor_cos.png: Graficul filtrului Gabor (cosinus).
+Mereu_Ioan_Flaviu_342C3_gabor_sin.png: Graficul filtrului Gabor (sinus).
+Mereu_Ioan_Flaviu_342C3_spectru_filtre.png: Spectrul filtrelor Gabor.
+
+
+Accuracy on train: 0.69
+Accuracy on test:  0.62
